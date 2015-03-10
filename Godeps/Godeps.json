@@ -3,6 +3,22 @@
 	"GoVersion": "go1.4.1",
 	"Deps": [
 		{
+			"ImportPath": "bitbucket.org/konek/auth-server/config",
+			"Rev": "107e854ebe85446be643c81470d96cee16db3593"
+		},
+		{
+			"ImportPath": "bitbucket.org/konek/auth-server/controllers",
+			"Rev": "107e854ebe85446be643c81470d96cee16db3593"
+		},
+		{
+			"ImportPath": "bitbucket.org/konek/auth-server/models",
+			"Rev": "107e854ebe85446be643c81470d96cee16db3593"
+		},
+		{
+			"ImportPath": "bitbucket.org/konek/auth-server/tools",
+			"Rev": "107e854ebe85446be643c81470d96cee16db3593"
+		},
+		{
 			"ImportPath": "github.com/julienschmidt/httprouter",
 			"Rev": "b428fda53bb0a764fea9c76c9413512eda291dec"
 		},

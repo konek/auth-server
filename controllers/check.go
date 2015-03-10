@@ -3,8 +3,8 @@ package controllers
 import (
 	"time"
 
-	"github.com/konek/auth-server/models"
-	"github.com/konek/auth-server/tools"
+	"bitbucket.org/konek/auth-server/models"
+	"bitbucket.org/konek/auth-server/tools"
 )
 
 // CheckRequest ...

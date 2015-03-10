@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"github.com/konek/auth-server/tools"
+	"bitbucket.org/konek/auth-server/tools"
 )
 
 // ControllerFunc ...

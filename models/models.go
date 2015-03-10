@@ -3,7 +3,7 @@ package models
 import (
 	"gopkg.in/mgo.v2"
 
-	"github.com/konek/auth-server/config"
+	"bitbucket.org/konek/auth-server/config"
 )
 
 var gSession *mgo.Session

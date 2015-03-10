@@ -7,9 +7,9 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 
-	"github.com/konek/auth-server/config"
-	c "github.com/konek/auth-server/controllers"
-	"github.com/konek/auth-server/models"
+	"bitbucket.org/konek/auth-server/config"
+	c "bitbucket.org/konek/auth-server/controllers"
+	"bitbucket.org/konek/auth-server/models"
 )
 
 func main() {

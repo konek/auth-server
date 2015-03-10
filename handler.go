@@ -7,9 +7,9 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 
-	"github.com/konek/auth-server/config"
-	"github.com/konek/auth-server/controllers"
-	"github.com/konek/auth-server/tools"
+	"bitbucket.org/konek/auth-server/config"
+	"bitbucket.org/konek/auth-server/controllers"
+	"bitbucket.org/konek/auth-server/tools"
 )
 
 func handler(conf config.Conf, fn controllers.ControllerFunc) httprouter.Handle {

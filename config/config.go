@@ -13,6 +13,8 @@ type Conf struct {
   Listen              string
   DbURL               string
   DbName              string
+  DbUserName          string
+  DbPwd               string
   SessionLifespan     int64
   PasswordMinLength   int
   Root                string
@@ -25,6 +27,8 @@ const (
   defaultListen = ":8080"
   defaultDbURL = "localhost:27017"
   defaultDbName = "auth"
+  defaultDbUserName = ""
+  defaultDbPwd = ""
   defaultSessionLifespan = 60 * 60 * 24 // 24 hours
   defaultPasswordLinlength = 8
   defaultetcd = ""
@@ -37,8 +41,10 @@ const (
 //
 // Environment variables :
 //   LISTEN: either :port or ip:port
-//   MONGO_URL: mongodb server's url
-//   DB_NAME: database's name for mongodb
+//   MONGODB_URL: mongodb server's url
+//   MONGODB_DATABASE: database's name for mongodb
+//   MONGODB_USERNAME: username for mongodb
+//   MONGODB_PASSWORD: password for mongodb
 //   SESSION_LIFESPAN: validity time limit of sessions (in seconds)
 //   PASSWD_MIN_LENGTH: minimum password length
 //   ETCD: (for future use)
@@ -50,6 +56,8 @@ func Config() Conf {
   ret.Listen = defaultListen
   ret.DbURL = defaultDbURL
   ret.DbName = defaultDbName
+  ret.DbUserName = defaultDbUserName
+  ret.DbPwd = defaultDbPwd
   ret.SessionLifespan = defaultSessionLifespan
   ret.PasswordMinLength = defaultPasswordLinlength
   ret.Etcd = defaultetcd
@@ -57,14 +65,20 @@ func Config() Conf {
   ret.LogToDb = defaultLogToDb
   ret.Root = defaultRoot
 
-  if os.Getenv("LISTEN") != "" {
-    ret.Listen = os.Getenv("LISTEN")
+  if os.Getenv("PORT") != "" {
+    ret.Listen = ":" + os.Getenv("LISTEN")
   }
-  if os.Getenv("MONGO_URL") != "" {
-    ret.DbURL = os.Getenv("MONGO_URL")
+  if os.Getenv("MONGODB_URL") != "" {
+    ret.DbURL = os.Getenv("MONGODB_URL")
   }
-  if os.Getenv("DB_NAME") != "" {
-    ret.DbName = os.Getenv("DB_NAME")
+  if os.Getenv("MONGODB_DATABASE") != "" {
+    ret.DbName = os.Getenv("MONGODB_DATABASE")
+  }
+  if os.Getenv("MONGODB_USERNAME") != "" {
+    ret.DbUserName = os.Getenv("MONGODB_USERNAME")
+  }
+  if os.Getenv("MONGODB_PASSWORD") != "" {
+    ret.DbPwd = os.Getenv("MONGODB_PASSWORD")
   }
   if os.Getenv("SESSION_LIFESPAN") != "" {
     lifespan, err := strconv.ParseInt(os.Getenv("SESSION_LIFESPAN"), 10, 64);

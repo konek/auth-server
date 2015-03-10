@@ -5,7 +5,7 @@ import (
 
 	"gopkg.in/mgo.v2"
 
-	"bitbucket.org/konek/auth-server/config"
+	"go.konek.io/auth-server/config"
 )
 
 var gSession *mgo.Session

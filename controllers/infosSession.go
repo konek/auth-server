@@ -3,8 +3,8 @@ package controllers
 import (
 	"time"
 
-	"bitbucket.org/konek/auth-server/models"
-	"bitbucket.org/konek/auth-server/tools"
+	"go.konek.io/auth-server/models"
+	"go.konek.io/auth-server/tools"
 )
 
 // InfosSessionResponse ...

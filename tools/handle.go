@@ -4,7 +4,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 
-	"bitbucket.org/konek/auth-server/config"
+	"go.konek.io/auth-server/config"
 )
 
 // Handle is used to reduce the controllers function signature.

@@ -1,6 +1,8 @@
 package models
 
 import (
+	"log"
+
 	"gopkg.in/mgo.v2"
 
 	"go.konek.io/auth-server/config"
@@ -13,6 +15,7 @@ var gDb *mgo.Database
 func Init(conf config.Conf) error {
 	gSession, err := mgo.Dial(conf.DbURL)
 	if err != nil {
+		log.Println("couldn't connect to database :", err, ", mongo_url is", conf.DbURL)
 		return err
 	}
 	gDb = gSession.DB(conf.DbName)

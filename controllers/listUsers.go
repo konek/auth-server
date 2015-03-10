@@ -1,31 +1,29 @@
-
 package controllers
 
 import (
-  "github.com/konek/auth-server/tools"
-  "github.com/konek/auth-server/models"
+	"github.com/konek/auth-server/models"
+	"github.com/konek/auth-server/tools"
 )
 
 // ListUsersResponse ...
 type ListUsersResponse struct {
-  Status    string `json:"status"`
-  Users  []models.User `json:"users"`
+	Status string        `json:"status"`
+	Users  []models.User `json:"users"`
 }
 
 // ListUsers returns a list of all users
 func ListUsers(handle tools.Handle) (interface{}, error) {
-  list, err := models.ListUsers()
-  if err != nil {
-    return nil, err
-  }
+	list, err := models.ListUsers()
+	if err != nil {
+		return nil, err
+	}
 
-  for i := range list {
-    list[i].Password = ""
-  }
+	for i := range list {
+		list[i].Password = ""
+	}
 
-  return ListUsersResponse{
-    Status: "ok",
-    Users: list,
-  }, nil
+	return ListUsersResponse{
+		Status: "ok",
+		Users:  list,
+	}, nil
 }
-

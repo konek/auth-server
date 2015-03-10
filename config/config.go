@@ -64,7 +64,7 @@ func Config() Conf {
 		ret.Listen = ":" + os.Getenv("PORT")
 	}
 	if os.Getenv("MONGO_URL") != "" {
-		ret.DbURL = os.Getenv("MONGODB_URL")
+		ret.DbURL = os.Getenv("MONGO_URL")
 	}
 	if os.Getenv("MONGODB_DATABASE") != "" {
 		ret.DbName = os.Getenv("MONGODB_DATABASE")

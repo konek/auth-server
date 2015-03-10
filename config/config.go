@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"log"
 	"strconv"
 )
 
@@ -64,8 +65,11 @@ func Config() Conf {
 	ret.LogToDb = defaultLogToDb
 	ret.Root = defaultRoot
 
+	log.Println("port =", os.Getenv("PORT"))
+	log.Println("mongodb_url =", os.Getenv("MONGODB_URL"))
+	log.Println("mongodb_database =", os.Getenv("MONGODB_DATABASE"))
 	if os.Getenv("PORT") != "" {
-		ret.Listen = ":" + os.Getenv("LISTEN")
+		ret.Listen = ":" + os.Getenv("PORT")
 	}
 	if os.Getenv("MONGODB_URL") != "" {
 		ret.DbURL = os.Getenv("MONGODB_URL")

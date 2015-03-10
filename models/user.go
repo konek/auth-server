@@ -3,7 +3,7 @@ package models
 import (
 	"gopkg.in/mgo.v2/bson"
 
-	"go.konek.io/auth-server/tools"
+	"bitbucket.org/konek/auth-server/tools"
 )
 
 // User is the model for users

@@ -6,7 +6,7 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
-	"go.konek.io/auth-server/tools"
+	"bitbucket.org/konek/auth-server/tools"
 )
 
 // Session is the model for sessions

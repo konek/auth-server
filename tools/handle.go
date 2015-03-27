@@ -1,15 +1,15 @@
 package tools
 
 import (
-	"github.com/julienschmidt/httprouter"
 	"net/http"
 
 	"go.konek.io/auth-server/config"
+	"go.konek.io/rest"
 )
 
 // Handle is used to reduce the controllers function signature.
 type Handle struct {
 	R *http.Request
-	P httprouter.Params
+	P rest.Params
 	C config.Conf
 }

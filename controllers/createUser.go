@@ -3,6 +3,7 @@ package controllers
 import (
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
+	"go.konek.io/rest"
 )
 
 // CreateResponse ...
@@ -18,7 +19,7 @@ func CreateUser(handle tools.Handle) (interface{}, error) {
 	user.Enable = true
 	user.Domains = nil
 	user.Variables = nil
-	err := tools.ParseBody(handle.R.Body, &user)
+	err := rest.Parse(handle.R, &user)
 	if err != nil {
 		return nil, tools.NewError(err, 400, "bad request: couldn't parse body")
 	}

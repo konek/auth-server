@@ -3,6 +3,7 @@ package controllers
 import (
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
+	"go.konek.io/rest"
 )
 
 // AuthRequest ...
@@ -20,10 +21,10 @@ type AuthResponse struct {
 
 // Auth authenticate a user, no session is created
 func Auth(handle tools.Handle) (interface{}, error) {
-	var q LoginRequest
+	var q AuthRequest
 	var user models.User
 
-	err := tools.ParseBody(handle.R.Body, &q)
+	err := rest.Parse(handle.R, &q)
 	if err != nil {
 		return nil, tools.NewError(err, 400, "bad request: couldn't parse body")
 	}

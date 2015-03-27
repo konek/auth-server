@@ -1,66 +1,24 @@
 package main
 
 import (
-	"encoding/json"
-	"log"
+	"fmt"
 	"net/http"
-
-	"github.com/julienschmidt/httprouter"
 
 	"go.konek.io/auth-server/config"
 	"go.konek.io/auth-server/controllers"
 	"go.konek.io/auth-server/tools"
+	"go.konek.io/rest"
 )
 
-func handler(conf config.Conf, fn controllers.ControllerFunc) httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func handler(conf config.Conf, fn controllers.ControllerFunc) rest.Controller {
+	return func(r *http.Request, p rest.Params) (interface{}, error) {
+		fmt.Println(r)
 		resp, err := fn(tools.Handle{
 			R: r,
 			P: p,
 			C: conf,
 		})
-		if err == nil {
-			err = writeJSON(w, resp)
-		}
-		if err != nil {
-			if errDetails, ok := err.(tools.APIError); ok == true {
-				writeError(w, errDetails)
-			} else {
-				log.Printf("Error: %s", err)
-				writeError(w, tools.NewError(
-					err,
-					500,
-					"An unexpected error occured, please contact an administrator"))
-			}
-		}
+		return resp, err
 	}
 }
 
-func writeJSON(w http.ResponseWriter, data interface{}) error {
-	chunk, err := json.Marshal(data)
-	if err != nil {
-		return err
-	}
-
-	w.Header().Set("Content-Type", "aplication/json")
-	w.WriteHeader(200)
-
-	_, err = w.Write(chunk)
-	return err
-}
-
-func writeError(w http.ResponseWriter, e tools.APIError) error {
-	chunk, err := json.Marshal(tools.ErrorResponse{
-		Status:  "error",
-		Message: e.Error(),
-	})
-	if err != nil {
-		return err
-	}
-
-	w.Header().Set("Content-Type", "aplication/json")
-	w.WriteHeader(e.Code)
-
-	_, err = w.Write(chunk)
-	return err
-}

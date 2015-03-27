@@ -5,6 +5,7 @@ import (
 
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
+	"go.konek.io/rest"
 )
 
 // CheckRequest ...
@@ -25,7 +26,7 @@ func Check(handle tools.Handle) (interface{}, error) {
 	var resp CheckResponse
 	var session models.Session
 
-	err := tools.ParseBody(handle.R.Body, &q)
+	err := rest.Parse(handle.R, &q)
 	if err != nil {
 		return nil, tools.NewError(err, 400, "bad request: couldn't parse body")
 	}

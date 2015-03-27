@@ -5,15 +5,14 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
-
 	"go.konek.io/auth-server/config"
 	c "go.konek.io/auth-server/controllers"
 	"go.konek.io/auth-server/models"
+	"go.konek.io/rest"
 )
 
 func main() {
-	router := httprouter.New()
+	router := rest.New()
 	conf := config.Config()
 	root := conf.Root
 

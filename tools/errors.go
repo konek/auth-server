@@ -7,6 +7,11 @@ type APIError struct {
 	Msg  string `json:"msg"`
 }
 
+// StatusCode returns the http code. Required for go.konek.io/rest to work properly.
+func (e APIError) StatusCode() int {
+	return e.Code
+}
+
 // ErrorResponse is the json response in case of error, Status must be set to 'error'.
 //
 // The message should be formated in a way it can be embeded in an error message

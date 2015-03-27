@@ -3,6 +3,7 @@ package controllers
 import (
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
+	"go.konek.io/rest"
 )
 
 // EditQuery ...
@@ -34,7 +35,7 @@ func EditUser(handle tools.Handle) (interface{}, error) {
 		return nil, tools.NewError(nil, 400, "bad request: invalid userID")
 	}
 
-	err := tools.ParseBody(handle.R.Body, &q)
+	err := rest.Parse(handle.R, &q)
 	if err != nil {
 		return nil, tools.NewError(err, 400, "bad request: couldn't parse body")
 	}

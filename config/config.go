@@ -56,7 +56,9 @@ func Config() Conf {
 	ret.LogToDb = defaultLogToDb
 	ret.Root = defaultRoot
 
-	if os.Getenv("PORT") != "" {
+	if os.Getenv("LISTEN") != "" {
+		ret.Listen = os.Getenv("LISTEN")
+	} else if os.Getenv("PORT") != "" {
 		ret.Listen = ":" + os.Getenv("PORT")
 	}
 	if os.Getenv("MONGO_URL") != "" {

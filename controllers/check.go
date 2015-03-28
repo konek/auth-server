@@ -6,6 +6,7 @@ import (
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
 	"go.konek.io/rest"
+	"go.konek.io/mgo"
 )
 
 // CheckRequest ...
@@ -21,7 +22,7 @@ type CheckResponse struct {
 }
 
 // Check if a session is expired, and if it grants access to the specified domain
-func Check(handle tools.Handle) (interface{}, error) {
+func Check(handle tools.Handle, db *mgo.DbQueue) (interface{}, error) {
 	var q CheckRequest
 	var resp CheckResponse
 	var session models.Session
@@ -45,7 +46,7 @@ func Check(handle tools.Handle) (interface{}, error) {
 	}
 
 	session.IDFromHex(q.Token)
-	err = session.Get()
+	err = session.Get(db)
 	if err != nil {
 		return nil, err
 	}

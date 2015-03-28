@@ -3,6 +3,7 @@ package controllers
 import (
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
+	"go.konek.io/mgo"
 )
 
 // InfosUserResponse ...
@@ -12,7 +13,7 @@ type InfosUserResponse struct {
 }
 
 // InfosUser returns informations about the user. It does not lists its sessions, yet (TODO)
-func InfosUser(handle tools.Handle) (interface{}, error) {
+func InfosUser(handle tools.Handle, db *mgo.DbQueue) (interface{}, error) {
 	var user models.User
 
 	uid := handle.P.ByName("uid")
@@ -24,7 +25,7 @@ func InfosUser(handle tools.Handle) (interface{}, error) {
 	}
 
 	user.IDFromHex(uid)
-	err := user.Get()
+	err := user.Get(db)
 	if err != nil {
 		return nil, err
 	}

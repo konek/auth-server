@@ -4,6 +4,7 @@ import (
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
 	"go.konek.io/rest"
+	"go.konek.io/mgo"
 )
 
 // LoginRequest ...
@@ -20,7 +21,7 @@ type LoginResponse struct {
 }
 
 // Login a user, creating a new session.
-func Login(handle tools.Handle) (interface{}, error) {
+func Login(handle tools.Handle, db *mgo.DbQueue) (interface{}, error) {
 	var q LoginRequest
 	var user models.User
 	var session models.Session
@@ -48,7 +49,7 @@ func Login(handle tools.Handle) (interface{}, error) {
 	user.Username = q.Username
 	user.Password = q.Password
 
-	ok, err := user.Check()
+	ok, err := user.Check(db)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +66,7 @@ func Login(handle tools.Handle) (interface{}, error) {
 
 	session.UserID = user.ID
 	session.Domain = q.Domain
-	remaining, err := session.Create(handle.C.SessionLifespan)
+	remaining, err := session.Create(db, handle.C.SessionLifespan)
 	if err != nil {
 		return nil, err
 	}

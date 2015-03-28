@@ -7,7 +7,7 @@ import (
 
 	"go.konek.io/auth-server/config"
 	c "go.konek.io/auth-server/controllers"
-	"go.konek.io/auth-server/models"
+	"go.konek.io/mgo"
 	"go.konek.io/rest"
 )
 
@@ -16,26 +16,37 @@ func main() {
 	conf := config.Config()
 	root := conf.Root
 
-	router.POST(root+"/user", handler(conf, c.CreateUser))
-	router.GET(root+"/user/:uid", handler(conf, c.InfosUser))
-	router.PUT(root+"/user/:uid", handler(conf, c.EditUser))
-	router.DELETE(root+"/user/:uid", handler(conf, c.DeleteUser))
-
-	router.GET(root+"/session/:token", handler(conf, c.InfosSession))
-	router.POST(root+"/session", handler(conf, c.Login))
-	router.PUT(root+"/session", handler(conf, c.Check))
-	router.DELETE(root+"/session/:token", handler(conf, c.Logoff))
-
-	router.POST(root+"/auth", handler(conf, c.Auth))
-	router.GET(root+"/clean/:age", handler(conf, c.Clean))
-
-	router.GET(root+"/list/users", handler(conf, c.ListUsers))
-	router.GET(root+"/list/sessions", handler(conf, c.ListSessions))
-
-	err := models.Init(conf)
-	if err != nil {
-		log.Fatal(err)
+	db := mgo.NewDbQueue(100)
+	// Adding 3 connections
+	for i := 0; i < 3; i++ {
+		db.AddConnection(conf.DbURL, conf.DbName)
 	}
+
+	if conf.Public == false {
+		router.POST(root+"/user", handler(conf, db, c.CreateUser))
+		router.GET(root+"/user/:uid", handler(conf, db, c.InfosUser))
+		router.PUT(root+"/user/:uid", handler(conf, db, c.EditUser))
+		router.DELETE(root+"/user/:uid", handler(conf, db, c.DeleteUser))
+	}
+
+	if conf.Public == false {
+		router.GET(root+"/session/:token", handler(conf, db, c.InfosSession))
+	}
+	router.POST(root+"/session", handler(conf, db, c.Login))
+	router.PUT(root+"/session", handler(conf, db, c.Check))
+	router.DELETE(root+"/session/:token", handler(conf, db, c.Logoff))
+
+	router.POST(root+"/auth", handler(conf, db, c.Auth))
+	if conf.Public == false {
+		router.GET(root+"/clean/:age", handler(conf, db, c.Clean))
+	}
+
+	if conf.Public == false {
+		router.GET(root+"/list/users", handler(conf, db, c.ListUsers))
+		router.GET(root+"/list/sessions", handler(conf, db, c.ListSessions))
+	}
+
+	db.Run()
 	fmt.Println("listening on ", conf.Listen)
 	log.Fatal(http.ListenAndServe(conf.Listen, router))
 }

@@ -3,6 +3,7 @@ package controllers
 import (
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
+	"go.konek.io/mgo"
 )
 
 // DeleteResponse ...
@@ -11,7 +12,7 @@ type DeleteResponse struct {
 }
 
 // DeleteUser the user, this does not clean its sessions, yet (TODO).
-func DeleteUser(handle tools.Handle) (interface{}, error) {
+func DeleteUser(handle tools.Handle, db *mgo.DbQueue) (interface{}, error) {
 	var user models.User
 
 	uid := handle.P.ByName("uid")
@@ -23,7 +24,7 @@ func DeleteUser(handle tools.Handle) (interface{}, error) {
 	}
 
 	user.IDFromHex(uid)
-	err := user.Delete()
+	err := user.Delete(db)
 	if err != nil {
 		return nil, err
 	}

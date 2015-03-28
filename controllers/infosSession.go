@@ -5,6 +5,7 @@ import (
 
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
+	"go.konek.io/mgo"
 )
 
 // InfosSessionResponse ...
@@ -14,7 +15,7 @@ type InfosSessionResponse struct {
 }
 
 // InfosSession get infos about the session (including remaining time)
-func InfosSession(handle tools.Handle) (interface{}, error) {
+func InfosSession(handle tools.Handle, db *mgo.DbQueue) (interface{}, error) {
 	var resp InfosSessionResponse
 	var session models.Session
 
@@ -27,7 +28,7 @@ func InfosSession(handle tools.Handle) (interface{}, error) {
 	}
 
 	session.IDFromHex(sid)
-	err := session.Get()
+	err := session.Get(db)
 	if err != nil {
 		return nil, err
 	}

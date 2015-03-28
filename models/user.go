@@ -4,6 +4,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 
 	"go.konek.io/auth-server/tools"
+	"go.konek.io/mgo"
 )
 
 // User is the model for users
@@ -24,9 +25,14 @@ func (u *User) IDFromHex(hex string) {
 
 // Create a new user in database.
 // (generates Salt)
-func (u *User) Create() (bson.ObjectId, error) {
-	q := gDb.C("users").Find(bson.M{"username": u.Username})
-	n, err := q.Count()
+func (u *User) Create(db *mgo.DbQueue) (bson.ObjectId, error) {
+	var n int
+	err := db.Push(func (db *mgo.Database, ec chan error) {
+		var e error
+		q := db.C("users").Find(bson.M{"username": u.Username})
+		n, e = q.Count()
+		ec <- e
+	})
 	if err != nil {
 		return "", err
 	}
@@ -40,39 +46,54 @@ func (u *User) Create() (bson.ObjectId, error) {
 		return "", err
 	}
 	u.Password = tools.PasswordHash(u.Username, u.Password, u.Salt)
-	err = gDb.C("users").Insert(u)
+	err = db.Push(func (db *mgo.Database, ec chan error) {
+		ec <- db.C("users").Insert(u)
+	})
 	return u.ID, err
 }
 
 // Delete user from database
-func (u User) Delete() error {
-	q := gDb.C("users").FindId(u.ID)
-	n, err := q.Count()
+func (u User) Delete(db *mgo.DbQueue) error {
+	var n int
+
+	err := db.Push(func (db *mgo.Database, ec chan error) {
+		var e error
+		q := db.C("users").FindId(u.ID)
+		n, e = q.Count()
+		ec <- e
+	})
 	if err != nil {
 		return err
 	}
 	if n == 0 {
 		return tools.NewError(nil, 404, "not found: user does not exist")
 	}
-	err = gDb.C("users").RemoveId(u.ID)
+	err = db.Push(func (db *mgo.Database, ec chan error) {
+		ec <- db.C("users").RemoveId(u.ID)
+	})
 	return err
 }
 
 // Update user in database. (update salt and password if needed)
-func (u User) Update() error {
+func (u User) Update(db *mgo.DbQueue) error {
+	var n int
 	var user User
 
-	q := gDb.C("users").FindId(u.ID)
-	n, err := q.Count()
+	err := db.Push(func (db *mgo.Database, ec chan error) {
+		var e error
+		q := db.C("users").FindId(u.ID)
+		n, e = q.Count()
+		if e != nil {
+			ec <- e
+			return
+		}
+		ec <- q.One(&user)
+	})
 	if err != nil {
 		return err
 	}
 	if n == 0 {
 		return tools.NewError(nil, 404, "not found: user does not exist")
-	}
-	err = q.One(&user)
-	if err != nil {
-		return err
 	}
 
 	if u.Username != "" {
@@ -101,49 +122,62 @@ func (u User) Update() error {
 	}
 	user.Enable = u.Enable
 
-	err = gDb.C("users").UpdateId(u.ID, user)
+	err = db.Push(func (db *mgo.Database, ec chan error) {
+		ec <- db.C("users").UpdateId(u.ID, user)
+	})
 	return err
 }
 
 // Get user from database
-func (u *User) Get() error {
-	q := gDb.C("users").FindId(u.ID)
-	n, err := q.Count()
+func (u *User) Get(db *mgo.DbQueue) error {
+	var n int
+	err := db.Push(func (db *mgo.Database, ec chan error) {
+		var e error
+		q := db.C("users").FindId(u.ID)
+		n, e = q.Count()
+		if e != nil {
+			ec <- e
+			return
+		}
+		ec <- q.One(u)
+	})
 	if err != nil {
 		return err
 	}
 	if n == 0 {
 		return tools.NewError(nil, 404, "not found: user does not exist")
-	}
-	err = q.One(u)
-	if err != nil {
-		return err
 	}
 	return nil
 }
 
 // GetByUsername fill the User given its username
-func (u *User) GetByUsername() error {
-	q := gDb.C("users").Find(bson.M{"username": u.Username})
-	n, err := q.Count()
+func (u *User) GetByUsername(db *mgo.DbQueue) error {
+	var n int
+
+	err := db.Push(func (db *mgo.Database, ec chan error) {
+		var e error
+		q := db.C("users").Find(bson.M{"username": u.Username})
+		n, e = q.Count()
+		if e != nil {
+			ec <- e
+			return
+		}
+		ec <- q.One(u)
+	})
 	if err != nil {
 		return err
 	}
 	if n == 0 {
 		return tools.NewError(nil, 404, "not found: user does not exist")
 	}
-	err = q.One(u)
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
 // Check if username and password matches
-func (u *User) Check() (bool, error) {
+func (u *User) Check(db *mgo.DbQueue) (bool, error) {
 	password := u.Password
 
-	err := u.GetByUsername()
+	err := u.GetByUsername(db)
 	if err != nil {
 		return false, err
 	}
@@ -160,16 +194,23 @@ func (u User) CheckDomain(domain string) bool {
 }
 
 // ListUsers return a list of all users
-func ListUsers() ([]User, error) {
+func ListUsers(db *mgo.DbQueue) ([]User, error) {
 	var list []User
-	q := gDb.C("users").Find(nil)
+	var n int
 
-	n, err := q.Count()
-	if err != nil {
-		return nil, err
-	}
-	list = make([]User, n)
-	err = q.All(&list)
+	err := db.Push(func (db *mgo.Database, ec chan error) {
+		var e error
+
+		q := db.C("users").Find(nil)
+		n, e = q.Count()
+		if e != nil {
+			ec <- e
+			return
+		}
+		list = make([]User, n)
+		ec <- q.All(&list)
+	})
+
 	if err != nil {
 		return nil, err
 	}

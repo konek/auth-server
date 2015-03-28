@@ -10,6 +10,7 @@ import (
 // TODO : add a toml reader for configuration file
 type Conf struct {
 	Listen            string
+	Public		  bool
 	DbURL             string
 	DbName            string
 	SessionLifespan   int64
@@ -21,7 +22,8 @@ type Conf struct {
 }
 
 const (
-	defaultListen            = ":8080"
+	defaultListen            = "127.0.0.1:8080"
+	defaultPublic		 = false
 	defaultDbURL             = "localhost:27017"
 	defaultDbName            = "auth"
 	defaultSessionLifespan   = 60 * 60 * 24 // 24 hours
@@ -47,6 +49,7 @@ const (
 func Config() Conf {
 	var ret Conf
 	ret.Listen = defaultListen
+	ret.Public = defaultPublic
 	ret.DbURL = defaultDbURL
 	ret.DbName = defaultDbName
 	ret.SessionLifespan = defaultSessionLifespan
@@ -60,6 +63,9 @@ func Config() Conf {
 		ret.Listen = os.Getenv("LISTEN")
 	} else if os.Getenv("PORT") != "" {
 		ret.Listen = ":" + os.Getenv("PORT")
+	}
+	if os.Getenv("PUBLIC") == "true" {
+		ret.Public = true
 	}
 	if os.Getenv("MONGO_URL") != "" {
 		ret.DbURL = os.Getenv("MONGO_URL")

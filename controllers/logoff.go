@@ -3,6 +3,7 @@ package controllers
 import (
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
+	"go.konek.io/mgo"
 )
 
 // LogoffResponse ...
@@ -11,7 +12,7 @@ type LogoffResponse struct {
 }
 
 // Logoff deletes a session (expired or not)
-func Logoff(handle tools.Handle) (interface{}, error) {
+func Logoff(handle tools.Handle, db *mgo.DbQueue) (interface{}, error) {
 	var session models.Session
 
 	sid := handle.P.ByName("token")
@@ -23,7 +24,7 @@ func Logoff(handle tools.Handle) (interface{}, error) {
 	}
 	session.IDFromHex(sid)
 
-	err := session.Delete()
+	err := session.Delete(db)
 	if err != nil {
 		return nil, err
 	}

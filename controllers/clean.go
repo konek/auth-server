@@ -5,6 +5,7 @@ import (
 
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
+	"go.konek.io/mgo"
 )
 
 // CleanResponse ...
@@ -14,7 +15,7 @@ type CleanResponse struct {
 }
 
 // Clean every expired sessions older than age
-func Clean(handle tools.Handle) (interface{}, error) {
+func Clean(handle tools.Handle, db *mgo.DbQueue) (interface{}, error) {
 	sAge := handle.P.ByName("age")
 
 	if sAge == "" {
@@ -24,7 +25,7 @@ func Clean(handle tools.Handle) (interface{}, error) {
 	if err != nil {
 		return nil, tools.NewError(err, 400, "bad request: invalid age")
 	}
-	n, err := models.CleanSessions(age)
+	n, err := models.CleanSessions(db, age)
 	if err != nil {
 		return nil, err
 	}

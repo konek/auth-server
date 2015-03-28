@@ -4,6 +4,7 @@ import (
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
 	"go.konek.io/rest"
+	"go.konek.io/mgo"
 )
 
 // AuthRequest ...
@@ -20,7 +21,7 @@ type AuthResponse struct {
 }
 
 // Auth authenticate a user, no session is created
-func Auth(handle tools.Handle) (interface{}, error) {
+func Auth(handle tools.Handle, db *mgo.DbQueue) (interface{}, error) {
 	var q AuthRequest
 	var user models.User
 
@@ -46,7 +47,7 @@ func Auth(handle tools.Handle) (interface{}, error) {
 	user.Username = q.Username
 	user.Password = q.Password
 
-	ok, err := user.Check()
+	ok, err := user.Check(db)
 	if err != nil {
 		return nil, err
 	}

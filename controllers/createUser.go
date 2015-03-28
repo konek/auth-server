@@ -4,6 +4,7 @@ import (
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
 	"go.konek.io/rest"
+	"go.konek.io/mgo"
 )
 
 // CreateResponse ...
@@ -13,7 +14,7 @@ type CreateResponse struct {
 }
 
 // CreateUser create a new user. Checks for duplicate users and password-length requirement
-func CreateUser(handle tools.Handle) (interface{}, error) {
+func CreateUser(handle tools.Handle, db *mgo.DbQueue) (interface{}, error) {
 	var user models.User
 
 	user.Enable = true
@@ -40,7 +41,7 @@ func CreateUser(handle tools.Handle) (interface{}, error) {
 		user.Variables = make(map[string]interface{})
 	}
 
-	uid, err := user.Create()
+	uid, err := user.Create(db)
 	return CreateResponse{
 		Status: "ok",
 		UserID: uid.Hex(),

@@ -4,6 +4,7 @@ import (
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
 	"go.konek.io/rest"
+	"go.konek.io/mgo"
 )
 
 // EditQuery ...
@@ -21,7 +22,7 @@ type EditResponse struct {
 }
 
 // EditUser update user. Enable will be set to true if not specified. Password and Salt are updated if necessary.
-func EditUser(handle tools.Handle) (interface{}, error) {
+func EditUser(handle tools.Handle, db *mgo.DbQueue) (interface{}, error) {
 	var user models.User
 	q := EditQuery{
 		Enable: true,
@@ -58,7 +59,7 @@ func EditUser(handle tools.Handle) (interface{}, error) {
 	}
 	user.Enable = q.Enable
 
-	err = user.Update()
+	err = user.Update(db)
 	if err != nil {
 		return nil, err
 	}

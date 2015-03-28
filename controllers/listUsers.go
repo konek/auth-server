@@ -3,6 +3,7 @@ package controllers
 import (
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
+	"go.konek.io/mgo"
 )
 
 // ListUsersResponse ...
@@ -12,8 +13,8 @@ type ListUsersResponse struct {
 }
 
 // ListUsers returns a list of all users
-func ListUsers(handle tools.Handle) (interface{}, error) {
-	list, err := models.ListUsers()
+func ListUsers(handle tools.Handle, db *mgo.DbQueue) (interface{}, error) {
+	list, err := models.ListUsers(db)
 	if err != nil {
 		return nil, err
 	}

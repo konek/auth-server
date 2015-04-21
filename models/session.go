@@ -71,7 +71,7 @@ func (s *Session) Get(db *mgo.DbQueue) error {
 
 		q := db.C("sessions").FindId(s.ID)
 		n, e = q.Count()
-		if e != nil {
+		if e != nil || n == 0 {
 			ec <- e
 			return
 		}
@@ -113,7 +113,7 @@ func ListSessions(db *mgo.DbQueue) ([]Session, error) {
 
 		q := db.C("sessions").Find(nil)
 		n, e = q.Count()
-		if e != nil {
+		if e != nil || n == 0 {
 			ec <- e
 			return
 		}

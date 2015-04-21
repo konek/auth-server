@@ -83,7 +83,7 @@ func (u User) Update(db *mgo.DbQueue) error {
 		var e error
 		q := db.C("users").FindId(u.ID)
 		n, e = q.Count()
-		if e != nil {
+		if e != nil || n == 0 {
 			ec <- e
 			return
 		}
@@ -135,7 +135,7 @@ func (u *User) Get(db *mgo.DbQueue) error {
 		var e error
 		q := db.C("users").FindId(u.ID)
 		n, e = q.Count()
-		if e != nil {
+		if e != nil || n == 0 {
 			ec <- e
 			return
 		}
@@ -158,7 +158,7 @@ func (u *User) GetByUsername(db *mgo.DbQueue) error {
 		var e error
 		q := db.C("users").Find(bson.M{"username": u.Username})
 		n, e = q.Count()
-		if e != nil {
+		if e != nil || n == 0 {
 			ec <- e
 			return
 		}
@@ -203,7 +203,7 @@ func ListUsers(db *mgo.DbQueue) ([]User, error) {
 
 		q := db.C("users").Find(nil)
 		n, e = q.Count()
-		if e != nil {
+		if e != nil || n == 0 {
 			ec <- e
 			return
 		}

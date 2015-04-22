@@ -23,6 +23,11 @@ func main() {
 	}
 
 	if conf.Public == false {
+		fmt.Println("Public = false")
+	} else {
+		fmt.Println("Public = true")
+	}
+	if conf.Public == false {
 		router.POST(root+"/user", handler(conf, db, c.CreateUser))
 		router.GET(root+"/user/:uid", handler(conf, db, c.InfosUser))
 		router.PUT(root+"/user/:uid", handler(conf, db, c.EditUser))

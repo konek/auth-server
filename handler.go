@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"go.konek.io/auth-server/config"
@@ -13,11 +12,17 @@ import (
 
 func handler(conf config.Conf, db *mgo.DbQueue, fn controllers.ControllerFunc) rest.Controller {
 	return func(r *http.Request, p rest.Params) (interface{}, error) {
-		fmt.Println(r)
+		sid := ""
+		for _, c := range(r.Cookies()) {
+			if c.Name == "auth" {
+				sid = c.Value
+			}
+		}
 		resp, err := fn(tools.Handle{
 			R: r,
 			P: p,
 			C: conf,
+			Sid: sid,
 		}, db)
 		return resp, err
 	}

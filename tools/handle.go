@@ -12,4 +12,5 @@ type Handle struct {
 	R *http.Request
 	P rest.Params
 	C config.Conf
+	Sid string
 }

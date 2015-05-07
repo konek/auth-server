@@ -24,29 +24,33 @@ type CheckResponse struct {
 // Check if a session is expired, and if it grants access to the specified domain
 func Check(handle tools.Handle, db *mgo.DbQueue) (interface{}, error) {
 	var q CheckRequest
-	var resp CheckResponse
-	var session models.Session
 
 	err := rest.Parse(handle.R, &q)
 	if err != nil {
 		return nil, tools.NewError(err, 400, "bad request: couldn't parse body")
 	}
+	return CheckSession(q, db)
+}
+
+func CheckSession(q CheckRequest, db *mgo.DbQueue) (interface{}, error) {
+	var resp CheckResponse
+	var session models.Session
 
 	if q.Token == "" {
-		return nil, tools.NewError(err, 400, "bad request: token is missing")
+		return nil, tools.NewError(nil, 400, "bad request: token is missing")
 	}
 	if tools.CheckID(q.Token) == false {
-		return nil, tools.NewError(err, 400, "bad request: invalid token")
+		return nil, tools.NewError(nil, 400, "bad request: invalid token")
 	}
 	if q.Domain == "" {
-		return nil, tools.NewError(err, 400, "bad request: domain is missing")
+		return nil, tools.NewError(nil, 400, "bad request: domain is missing")
 	}
 	if q.Domain == "/" {
 		return nil, tools.NewError(nil, 400, "bad request: illegal domain")
 	}
 
 	session.IDFromHex(q.Token)
-	err = session.Get(db)
+	err := session.Get(db)
 	if err != nil {
 		return nil, err
 	}

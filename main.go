@@ -27,9 +27,10 @@ func main() {
 	} else {
 		fmt.Println("Public = true")
 	}
+	router.GET(root+"/user/:uid", handler(conf, db, c.InfosUser))
+	router.GET(root+"/user/", handler(conf, db, c.InfosUser)) // UID from session
 	if conf.Public == false {
 		router.POST(root+"/user", handler(conf, db, c.CreateUser))
-		router.GET(root+"/user/:uid", handler(conf, db, c.InfosUser))
 		router.PUT(root+"/user/:uid", handler(conf, db, c.EditUser))
 		router.DELETE(root+"/user/:uid", handler(conf, db, c.DeleteUser))
 	}

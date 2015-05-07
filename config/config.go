@@ -3,6 +3,9 @@ package config
 import (
 	"os"
 	"strconv"
+	"io/ioutil"
+
+	"github.com/BurntSushi/toml"
 )
 
 // Conf is the global configuration struct, set via environment variables
@@ -59,6 +62,19 @@ func Config() Conf {
 	ret.LogToDb = defaultLogToDb
 	ret.Root = defaultRoot
 
+	if len(os.Args) >= 2 {
+		conffile := os.Args[1]
+		b, err := ioutil.ReadFile(conffile)
+		if err != nil {
+			panic(err)
+			return ret
+		}
+		_, err = toml.Decode(string(b), &ret)
+		if err != nil {
+			panic(err)
+			return ret
+		}
+	}
 	if os.Getenv("LISTEN") != "" {
 		ret.Listen = os.Getenv("LISTEN")
 	} else if os.Getenv("PORT") != "" {

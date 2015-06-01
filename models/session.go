@@ -29,59 +29,31 @@ func (s *Session) Create(db *mgo.DbQueue, lifespan int64) (int, error) {
 	if s.Expire == 0 {
 		s.Expire = time.Now().Unix() + lifespan
 	}
-	err := db.Push(func (db *mgo.Database, ec chan error) {
-		ec <- db.C("sessions").Insert(s)
-	})
+	err := db.Insert("sessions", s)
 	if err != nil {
 		return 0, err
 	}
-
 	return int(lifespan), nil
 }
 
 // Delete a session in database
 func (s *Session) Delete(db *mgo.DbQueue) error {
-	var n int
-
-	err := db.Push(func (db *mgo.Database, ec chan error) {
-		var e error
-
-		q := db.C("sessions").FindId(s.ID)
-		n, e = q.Count()
-		ec <- e
-	})
+	n, err := db.Count("sessions", mgo.M{"_id": s.ID})
 	if err != nil {
 		return err
 	}
 	if n == 0 {
 		return tools.NewError(nil, 404, "not found: session does not exist")
 	}
-	err = db.Push(func (db *mgo.Database, ec chan error) {
-		ec <- db.C("sessions").RemoveId(s.ID)
-	})
+	err = db.RemoveID("sessions", s.ID)
 	return err
 }
 
 // Get a session from database
 func (s *Session) Get(db *mgo.DbQueue) error {
-	var n int
-
-	err := db.Push(func (db *mgo.Database, ec chan error) {
-		var e error
-
-		q := db.C("sessions").FindId(s.ID)
-		n, e = q.Count()
-		if e != nil || n == 0 {
-			ec <- e
-			return
-		}
-		ec <- q.One(s)
-	})
+	err := db.FindOneID("sessions", s, s.ID)
 	if err != nil {
 		return err
-	}
-	if n == 0 {
-		return tools.NewError(nil, 404, "not found: session does not exist")
 	}
 	return nil
 }
@@ -91,7 +63,7 @@ func CleanSessions(db *mgo.DbQueue, age int64) (int, error) {
 	var change *mgov2.ChangeInfo
 	limit := time.Now().Unix() - age
 
-	err := db.Push(func (db *mgo.Database, ec chan error) {
+	err := db.Push(func(db *mgo.Database, ec chan error) {
 		var e error
 		change, e = db.C("sessions").RemoveAll(bson.M{"expire": bson.M{"$lt": limit}})
 		ec <- e
@@ -106,21 +78,7 @@ func CleanSessions(db *mgo.DbQueue, age int64) (int, error) {
 // ListSessions returns a list of all the sessions
 func ListSessions(db *mgo.DbQueue) ([]Session, error) {
 	var list []Session
-	var n int
-
-	err := db.Push(func (db *mgo.Database, ec chan error) {
-		var e error
-
-		q := db.C("sessions").Find(nil)
-		n, e = q.Count()
-		if e != nil || n == 0 {
-			ec <- e
-			return
-		}
-		list = make([]Session, n)
-		ec <- q.All(&list)
-	})
-
+	err := db.Find("sessions", &list, nil)
 	if err != nil {
 		return nil, err
 	}

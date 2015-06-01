@@ -3,8 +3,10 @@ package controllers
 import (
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
-	"go.konek.io/rest"
 	"go.konek.io/mgo"
+	"go.konek.io/rest"
+
+	"github.com/asaskevich/govalidator"
 )
 
 // LoginRequest ...
@@ -48,6 +50,15 @@ func Login(handle tools.Handle, db *mgo.DbQueue) (interface{}, error) {
 
 	user.Username = q.Username
 	user.Password = q.Password
+
+	if govalidator.IsEmail(user.Username) == false {
+		return nil, tools.NewError(nil, 400, "bad request: username must be a valid email")
+	}
+
+	user.Username, err = govalidator.NormalizeEmail(user.Username)
+	if err != nil {
+		return nil, tools.NewError(nil, 400, "bad request: username must be a valid email")
+	}
 
 	ok, err := user.Check(db)
 	if err != nil {

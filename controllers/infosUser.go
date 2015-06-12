@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"bitbucket.org/konek/mgo"
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
-	"go.konek.io/mgo"
 )
 
 // InfosUserResponse ...
@@ -43,6 +43,7 @@ func InfosUser(handle tools.Handle, db *mgo.DbQueue) (interface{}, error) {
 		return nil, err
 	}
 	user.Password = ""
+	user.Salt = ""
 	return InfosUserResponse{
 		Status: "ok",
 		Infos:  user,

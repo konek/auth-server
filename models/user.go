@@ -3,19 +3,19 @@ package models
 import (
 	"gopkg.in/mgo.v2/bson"
 
+	"bitbucket.org/konek/mgo"
 	"go.konek.io/auth-server/tools"
-	"go.konek.io/mgo"
 )
 
 // User is the model for users
 type User struct {
-	ID        bson.ObjectId          `bson:"_id" json:"uid"`
+	ID        bson.ObjectId          `bson:"_id" json:"_id"`
 	Username  string                 `json:"username"`
 	Password  string                 `json:"password"`
 	Domains   []string               `json:"domains"`
 	Enable    bool                   `json:"enable"`
 	Variables map[string]interface{} `json:"variables"`
-	Salt      string                 `json:"-"`
+	Salt      string                 `json:"salt"`
 }
 
 // IDFromHex fill the ID from a string hex
@@ -61,7 +61,7 @@ func (u User) Delete(db *mgo.DbQueue) error {
 func (u User) Update(db *mgo.DbQueue) error {
 	var user User
 
-	err := db.FindOne("users", &user, u.ID)
+	err := db.FindOneID("users", &user, u.ID)
 	if err != nil {
 		return err
 	}

@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"bitbucket.org/konek/mgo"
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
-	"go.konek.io/mgo"
 )
 
 // ListUsersResponse ...
@@ -21,6 +21,7 @@ func ListUsers(handle tools.Handle, db *mgo.DbQueue) (interface{}, error) {
 
 	for i := range list {
 		list[i].Password = ""
+		list[i].Salt = ""
 	}
 
 	return ListUsersResponse{

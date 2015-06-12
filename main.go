@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
+	"bitbucket.org/konek/mgo"
 	"go.konek.io/auth-server/config"
 	c "go.konek.io/auth-server/controllers"
-	"go.konek.io/mgo"
 	"go.konek.io/rest"
 )
 

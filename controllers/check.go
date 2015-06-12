@@ -3,10 +3,10 @@ package controllers
 import (
 	"time"
 
+	"bitbucket.org/konek/mgo"
 	"go.konek.io/auth-server/models"
 	"go.konek.io/auth-server/tools"
 	"go.konek.io/rest"
-	"go.konek.io/mgo"
 )
 
 // CheckRequest ...

@@ -1,8 +1,8 @@
 package controllers
 
 import (
+	"bitbucket.org/konek/mgo"
 	"go.konek.io/auth-server/tools"
-	"go.konek.io/mgo"
 )
 
 // ControllerFunc ...

@@ -6,16 +6,16 @@ import (
 	mgov2 "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
+	"bitbucket.org/konek/mgo"
 	"go.konek.io/auth-server/tools"
-	"go.konek.io/mgo"
 )
 
 // Session is the model for sessions
 type Session struct {
-	ID     bson.ObjectId `bson:"_id" json:"sid"`
-	UserID bson.ObjectId `json:"uid"`
-	Domain string        `json:"domain"`
-	Expire int64         `json:"expire"`
+	ID     bson.ObjectId `bson:"_id" json:"_id"`
+	UserID bson.ObjectId
+	Domain string
+	Expire int64
 }
 
 // IDFromHex fill the ID from a string hex

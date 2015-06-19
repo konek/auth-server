@@ -4,6 +4,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 
 	"bitbucket.org/konek/mgo"
+	"github.com/asaskevich/govalidator"
 	"go.konek.io/auth-server/tools"
 )
 
@@ -134,6 +135,44 @@ func (u *User) Check(db *mgo.DbQueue) (bool, error) {
 // CheckDomain Check if the user has access to domain
 func (u User) CheckDomain(domain string) bool {
 	return tools.CheckDomains(u.Domains, domain)
+}
+
+func (u User) Login(username, password, domain string, lifespan int64, db *mgo.DbQueue) (Session, error) {
+	var s Session
+	var err error
+
+	u.Username, err = govalidator.NormalizeEmail(username)
+	if err != nil {
+		return s, tools.NewError(nil, 400, "bad request: username must be a valid email")
+	}
+	u.Password = password
+	if password == "" {
+		return s, tools.NewError(nil, 400, "bad request: password is missing")
+	}
+
+	ok, err := u.Check(db)
+	if err != nil {
+		return s, err
+	}
+	if ok == false {
+		return s, tools.NewError(nil, 403, "forbidden: invalid user or password")
+	}
+	if u.Enable == false {
+		return s, tools.NewError(nil, 403, "forbidden: user is diabled")
+	}
+	ok = u.CheckDomain(domain)
+	if ok == false {
+		return s, tools.NewError(nil, 403, "forbidden: restricted domain")
+	}
+
+	s.UserID = u.ID
+	s.Domain = domain
+	_, err = s.Create(db, lifespan)
+	if err != nil {
+		return s, err
+	}
+
+	return s, nil
 }
 
 // ListUsers return a list of all users

@@ -58,6 +58,16 @@ func (s *Session) Get(db *mgo.DbQueue) error {
 	return nil
 }
 
+func (s Session) Check(domain string) bool {
+	if s.Expire < time.Now().Unix() {
+		return false
+	}
+	if tools.CheckDomain(domain, s.Domain) == false {
+		return false
+	}
+	return true
+}
+
 // CleanSessions remove expired sessions older than `age`
 func CleanSessions(db *mgo.DbQueue, age int64) (int, error) {
 	var change *mgov2.ChangeInfo

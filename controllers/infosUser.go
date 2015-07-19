@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"bitbucket.org/konek/mgo"
+	"gopkg.in/konek/mgo.v1"
 	"gopkg.in/konek/auth-server.v1/models"
 	"gopkg.in/konek/auth-server.v1/tools"
 )

@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"bitbucket.org/konek/mgo"
+	"gopkg.in/konek/mgo.v1"
 	"gopkg.in/konek/auth-server.v1/config"
 	"gopkg.in/konek/auth-server.v1/controllers"
 	"gopkg.in/konek/auth-server.v1/tools"

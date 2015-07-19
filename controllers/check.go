@@ -3,7 +3,7 @@ package controllers
 import (
 	"time"
 
-	"bitbucket.org/konek/mgo"
+	"gopkg.in/konek/mgo.v1"
 	"gopkg.in/konek/auth-server.v1/models"
 	"gopkg.in/konek/auth-server.v1/tools"
 	"go.konek.io/rest"

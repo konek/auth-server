@@ -6,7 +6,7 @@ import (
 	mgov2 "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
-	"bitbucket.org/konek/mgo"
+	"gopkg.in/konek/mgo.v1"
 	"gopkg.in/konek/auth-server.v1/tools"
 )
 

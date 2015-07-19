@@ -3,7 +3,7 @@ package models
 import (
 	"gopkg.in/mgo.v2/bson"
 
-	"bitbucket.org/konek/mgo"
+	"gopkg.in/konek/mgo.v1"
 	"github.com/asaskevich/govalidator"
 	"gopkg.in/konek/auth-server.v1/tools"
 )

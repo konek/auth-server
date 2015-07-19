@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"bitbucket.org/konek/mgo"
+	"gopkg.in/konek/mgo.v1"
 	"gopkg.in/konek/auth-server.v1/config"
 	c "gopkg.in/konek/auth-server.v1/controllers"
 	"go.konek.io/rest"

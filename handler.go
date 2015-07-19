@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"bitbucket.org/konek/mgo"
-	"go.konek.io/auth-server/config"
-	"go.konek.io/auth-server/controllers"
-	"go.konek.io/auth-server/tools"
+	"gopkg.in/konek/auth-server.v1/config"
+	"gopkg.in/konek/auth-server.v1/controllers"
+	"gopkg.in/konek/auth-server.v1/tools"
 	"go.konek.io/rest"
 )
 

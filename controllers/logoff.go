@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"bitbucket.org/konek/mgo"
-	"go.konek.io/auth-server/models"
-	"go.konek.io/auth-server/tools"
+	"gopkg.in/konek/auth-server.v1/models"
+	"gopkg.in/konek/auth-server.v1/tools"
 )
 
 // LogoffResponse ...

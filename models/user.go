@@ -5,7 +5,7 @@ import (
 
 	"bitbucket.org/konek/mgo"
 	"github.com/asaskevich/govalidator"
-	"go.konek.io/auth-server/tools"
+	"gopkg.in/konek/auth-server.v1/tools"
 )
 
 // User is the model for users

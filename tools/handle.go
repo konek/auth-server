@@ -3,7 +3,7 @@ package tools
 import (
 	"net/http"
 
-	"go.konek.io/auth-server/config"
+	"gopkg.in/konek/auth-server.v1/config"
 	"go.konek.io/rest"
 )
 
